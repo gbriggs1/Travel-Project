@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="./static/navStyles.css" />
+		<style>
+			#interests {
+				user-select: none;
+			}
+			#interests > span {
+				display: inline-block;
+				position: relative;
+				box-sizing: border-box;
+
+				margin: 3px;
+
+				border: 1px solid black;
+				border-radius: 15px;
+
+				padding: 7px;
+
+				width: 150px;
+				height: 112.5px;
+
+				text-align: center;
+				vertical-align: top;
+			}
+			#interests > span > input {
+				position: absolute;
+				bottom: 7px;
+				right: 7px;
+				pointer-events: none;
+			}
+
+			#city-dropdown {
+				min-width: 25ch;
+			}
+		</style>
+		<script src="./static/cityHandler.js"></script>
+		<script>
+
+
+			window.addEventListener("load", () => {
+				for(let interest of document.querySelectorAll("#interests > span")) {
+					const checkbox = interest.querySelector("input")
+
+					interest.addEventListener("click", (e) => {
+						checkbox.checked = !checkbox.checked;
+						e.preventDefault();
+					});
+				}
+
+				document.querySelector("#submit-button").addEventListener("click", () => {
+					const payload = {
+						startDate: document.querySelector("#trip-start-input").value,
+						dailyBudget: document.querySelector("#daily-budget-input").value,
+						tripState: document.querySelector("#state-dropdown").value,
+						tripCity: document.querySelector("#city-dropdown").value,
+						interests: []
+					};
+
+					const checkBoxes = document.querySelectorAll(`#interests input[type="checkbox"]`);
+					for(let checkBox of checkBoxes) {
+						if(checkBox.checked) {
+							payload.interests.push(checkBox.getAttribute("data-value"));
+						}
+					}
+
+					const xhr = new XMLHttpRequest();
+
+					xhr.onreadystatechange = function() {
+						if(xhr.readyState === 4) {
+							const scheduleId = +(xhr.response);
+
+							if(isNaN(scheduleId)) {
+								console.log("error!!! response is: " + xhr.response);
+								return;
+							}
+							window.location.href = `./schedule?scheduleid=${scheduleId}`;
+						}
+					}
+					xhr.open("POST", "TripInformation", true);
+					xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+					xhr.send(JSON.stringify(payload));
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<ul id="side-nav">
+			<li><a class="active" href="./scheduleForm">New Trip</a></li>
+			<li><a href="#news">Current Trips </a></li>
+			<li><a href="#contact">Future Trips</a></li>
+		</ul>
+
+		<div id="content">
+			<form>
+				<label>Trip Start: <input type="date" id="trip-start-input" /></label>
+				<br/>
+				<!-- <label>Trip End: <input type="datetime-local" id="trip-end-input" /></label>
+				<br/>  -->
+				<!-- <div>Trip Duration: <span id="trip-duration"></span></div> -->
+				<select name="state" id="state-dropdown">
+					<option value="null">select a state</option>
+				</select>
+				<br/>
+				<select name="city" id="city-dropdown" disabled></select>
+				<br/>
+				<label>Daily Budget: <input type="number" id="daily-budget-input" step="1" min="0"/></label>
+				<h2>Interests:</h2>
+				<div id="interests">
+					<span>Sports<input type="checkbox" data-value="Sports" /></span>
+					<span>Plays<input type="checkbox" data-value="Plays" /></span>
+					<span>Movies<input type="checkbox" data-value="Movies" /></span>
+					<span>Arcades<input type="checkbox" data-value="Arcades" /></span>
+					<span>Museums<input type="checkbox" data-value="Museums" /></span>
+					<span>Parks<input type="checkbox" data-value="Parks" /></span>
+					<span>Landmarks<input type="checkbox" data-value="Landmarks" /></span>
+					<span>Music<input type="checkbox" data-value="Music" /></span>
+					<span>Meals<input type="checkbox" data-value="Meals" /></span>
+					<span>Abandoned Buildings<input type="checkbox" data-value="Abandoned Buildings" /></span>
+				</div>
+				<button type="button" id="submit-button">Start scheduling!</button>
+			</form>
+		</div>
+
+		<div id="top-nav">
+			<a class="active" href="#home">[app Name]</a>
+			<a href="#news">Username</a>
+			<a href="#contact">Settings</a>
+			<a href="#about">sign out</a>
+		</div>
+
+
+	</body>
+</html>

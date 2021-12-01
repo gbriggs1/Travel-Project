@@ -1,0 +1,26 @@
+/*table, #header {
+	width: 95%;
+}*/
+table {
+	border-collapse: collapse;
+	
+}
+td {
+	border: 1px solid black;
+}
+
+.calendar-cell.outside-of-month  {
+	background-color: darkgray;
+}
+.calendar-cell.after-month {
+	/*border: none;
+	visibility: hidden;*/
+}
+
+#month-header {
+	display: inline-block;
+	text-align: center;
+	box-sizing: border-box;
+	width: 15ch;
+}
+

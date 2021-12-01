@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+
+  <style>
+    a {
+      color: white;
+    }
+
+    .vl {
+
+      border-left: 6px solid black;
+      height: 50px;
+      position: absolute;
+      left: 90%;
+      margin-left: 6px;
+      top: 0;
+    }
+
+    .timeline_days_display {
+      border: 5px solid rgb(70, 69, 69);
+      margin-left: 20%;
+      margin-right: 20%;
+
+    }
+
+    .event_block {
+      border-radius: 10px;
+      background-color: #767973;
+      padding: 10px;
+
+      width: 600px;
+      margin-left: 30px;
+      margin-top: 30px;
+      /* height: 100px;
+      min-height: 100px;
+      max-height: 100px; */
+
+    }
+
+    table {
+      border: collapse;
+      border-radius: 10px;
+
+    }
+
+    td {
+      padding: 10px;
+      text-align: center;
+      padding-right: 30px;
+      width: 180px;
+      color: white;
+
+
+
+    }
+
+    .timeline_date,
+    .timeline_day {
+      background-color: #a12824;
+      color: white;
+      border-collapse: collapse;
+      padding: 10px;
+      text-align: center;
+      overflow: auto;
+      /* height: 75px;
+      min-height: 75px;
+      max-height: 75px; */
+
+      border-radius: 10px;
+
+
+    }
+  </style>
+  <link rel="stylesheet" href="./static/navStyles.css" />
+
+  <title> [TRIP NAME] </title>
+
+</head>
+
+
+
+<script>
+
+
+
+  function generate_id(type, number) {
+    var id_generated = type + number;
+    return id_generated;
+
+
+  }
+
+  function format_date(date_object) {
+    var day, day_num, month, year, day_dictionary, date_as_string, hours, minutes,
+      time_in_day;
+
+    day_dictionary = {
+      0: 'Monday',
+      1: 'Tuesday',
+      2: 'Wednesday',
+      3: 'Thursday',
+      4: 'Friday',
+      5: 'Saturday',
+      6: 'Sunday'
+    };
+
+    day = day_dictionary[date_object.getDay()];
+
+    day_num = date_object.getDate();
+    month = date_object.getMonth();
+    year = date_object.getFullYear();
+    date_as_string = '' + month + '/' + day_num + '/' + year;
+    hours = date_object.getHours();
+    minutes = date_object.getMinutes();
+    time_in_day = '' + hours + ':' + minutes;
+
+
+
+    return [day, date_as_string, time_in_day];
+
+  }
+
+  function generate_trip_name(trip_events) {
+    day_event = trip_events[0];
+
+    date_and_time_object = new Date(day_event["date-time"]);
+    date_and_time_object = format_date(date_and_time_object); // returns a list of ['day', 'date']
+    day = date_and_time_object[0];
+    date = date_and_time_object[1];
+    trip_name = day + '  | ' + date;
+
+    return trip_name;
+
+
+
+  }
+
+
+  function display_trips(all_trips) {
+
+    //variables used for each day's summary
+    //these id variables will be used to determine whar information is displayed about each event
+    // when said information is available. va variables will fill in the content displayed to the user / client!? :)
+    var info_1_va, info_2_va, info_3_va, info_4_va, day, date, trip_name, temporary_id,
+      trip_num, trip_events, day_event, html_code_trip, element_type, date_and_time_object, red_box, event_start_time;
+
+    /*variables I anticipate to use later when we have multiple trips
+      all_trips:  for outer for loop;
+    */
+
+
+
+    //this loop is for testing only. Change condition to work
+    for (let testing = 0; testing < 0; testing++) {
+      all_trips.push(all_trips[0]);
+    }
+
+
+    temporary_id = 1;
+    for (var j = 0; j < all_trips.length; j++) {
+
+      /*What I want to do here is 1- add trip title 2-index each trips event with J*/
+
+
+
+      trip_events = all_trips[j]
+      trip_name = generate_trip_name(trip_events); // this function's existence is a bit redundant but, at the time being, necessary
+
+      html_code_trip = `<div name = ` + trip_name + ` type = 'trip_block' class = 'give_id' id = ` + '' + temporary_id * (j + 1) + ` >
+                        <h1 class = 'trip_name listened_to give_id' type = 'trip_title'> ` + trip_name + ` </h1>
+                        </div>`
+
+      document.getElementById('trip_by_days_Summary').innerHTML += html_code_trip;
+
+
+      for (var i = 0; i < trip_events.length; i++) {
+
+        day_event = trip_events[i];
+
+        date_and_time_object = new Date(day_event["date-time"]);
+        date_and_time_object = format_date(date_and_time_object); // returns a list of ['day', 'date']
+        day = date_and_time_object[0];
+        date = date_and_time_object[1];
+        event_start_time = date_and_time_object[2];
+
+        info_1_va = day_event["address"];
+        info_2_va = event_start_time;
+        info_3_va = day_event["category"];
+        info_4_va = day_event["link"];
+        red_box = day_event["title"];
+        console.log(date_and_time_object);
+        trip_name = day + '  | ' + date;
+
+
+        html_code_trip = `<!-- Tha page expects a list of days with their schedules -->
+                                      <div class = 'event_block content listened_to give_id'  type = 'event_block' >
+                                          <table  border-radius= 25px class='day_block_metadata'>
+                                                      <tr>
+                                                        <td class='timeline_day timeline_date' rowspan='2'> `+ red_box + ` </td>
+                                                        <td type = 'event_info' class = 'give_id'> ` + info_1_va + `</td>
+                                                        <td type = 'event_info' class = 'give_id'> starts at |` + info_2_va + `</td>
+                                                      </tr>
+                                                      <tr>
+                                                        <td  type = 'event_info' class = 'give_id'> ` + info_3_va + `</td>
+                                                        <td  type = 'event_info' class = 'give_id'>
+                                                            <a href=`+ info_4_va + `>Website</a>
+                                                        </td>
+                                                      </tr>
+                                                </table>
+                                    </div>
+                                  </dibv>
+                                `;
+
+
+        document.getElementById('' + temporary_id * (j + 1)).innerHTML += html_code_trip;
+
+
+        //document.getElementById('trip_by_days_Summary').appendChild(div);
+        //document.getElementById('trip_by_days_Summary').innerHTML += tripItemGenerator(tripobj);
+      };
+    };
+  };
+
+
+  function collapse_element(id) {
+    document.getElementById(id).style.display = "none";
+  }
+
+  function show_element(id) {
+    document.getElementById(id).style.display = "block";
+  }
+
+  function give_elements_IDs() {
+
+    var elements, id_count;
+
+
+    elements = document.getElementsByClassName('give_id');
+
+    id_count = 0;
+    for (let i = 0; i < elements.length; i++) {
+
+      element = elements[i];
+      type = element.getAttribute('type');
+      element.id = generate_id(type, id_count);
+      id_count++;
+
+
+
+    }
+
+
+
+
+  }
+
+
+  //TODO:
+  function add_event_listeners() {
+    var element, elements_parent, element_children, element;
+    document.querySelectorAll('.listened_to').forEach(item => {
+      console.log(item);
+      item.addEventListener('click', event => {
+        if (item.tagName === 'H1') {
+          elements_parent = document.getElementById(item.id).parentElement;
+          console.log(elements_parent);
+          element_children = elements_parent.children;
+          for (let i = 0; i < element_children.length; i++) {
+            element = element_children[i];
+            if (element.tagName == 'DIV') {
+              console.log('Value looking for:' + element.style.display);
+              if (element.style.display == "none") { show_element(element.id); }
+              else { collapse_element(element.id); }
+            }
+          }
+        }
+
+      })
+    })
+
+  }
+
+
+
+
+
+
+
+</script>
+
+
+
+<body>
+	<ul id="side-nav">
+		<li><a class="active" href="./scheduleForm">New Trip</a></li>
+		<li><a href="#news">Current Trips </a></li>
+		<li><a href="#contact">Future Trips</a></li>
+	</ul>
+
+	<div id="content">
+		<div id='trip_by_days_Summary'>
+
+	    </div>
+	</div>
+
+	<div id="top-nav">
+		<a class="active" href="#home">[app Name]</a>
+		<a href="#news">Username</a>
+		<a href="#contact">Settings</a>
+		<a href="#about">sign out</a>
+	</div>
+  <script>
+
+    /*Things the page will do right away and some global varibales*/
+
+
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        var all_trips = JSON.parse(xhr.response);
+        display_trips(all_trips);
+        give_elements_IDs();
+        add_event_listeners();
+      }
+    }
+    const urlparams = new URLSearchParams(window.location.search);
+    xhr.open("GET", "./schedule/data?scheduleid=" + urlparams.get("scheduleid"), true);
+    console.log(urlparams.get("scheduleid"))
+
+    // xhr.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+    xhr.send();
+
+  </script>
+
+</body>
+
+</html>

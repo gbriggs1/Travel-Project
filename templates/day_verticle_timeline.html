@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #474e5d;
+      font-family: Helvetica, sans-serif;
+    }
+
+    /* The actual timeline (the vertical ruler) */
+    #timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* The actual timeline (the vertical ruler) */
+    #timeline::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      background-color: orange;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -3px;
+    }
+
+    /* Container around content */
+    .container {
+      padding: 10px 40px;
+      position: relative;
+      background-color: inherit;
+      width: 50%;
+    }
+
+    /* The circles on the timeline */
+    .container::after {
+      content: '';
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      right: -17px;
+      background-color: white;
+      border: 4px solid #FF9F55;
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    /* Place the container to the left */
+    .left {
+      left: 0;
+    }
+
+    /* Place the container to the right */
+    .right {
+      left: 50%;
+    }
+
+    /* Add arrows to the left container (pointing right) */
+    .left::before {
+      content: " ";
+      height: 0;
+      position: absolute;
+      top: 22px;
+      width: 0;
+      z-index: 1;
+      right: 30px;
+      border: medium solid white;
+      border-width: 10px 0 10px 10px;
+      border-color: transparent transparent transparent white;
+    }
+
+    /* Add arrows to the right container (pointing left) */
+    .right::before {
+      content: " ";
+      height: 0;
+      position: absolute;
+      top: 22px;
+      width: 0;
+      z-index: 1;
+      left: 30px;
+      border: medium solid white;
+      border-width: 10px 10px 10px 0;
+      border-color: transparent white transparent transparent;
+    }
+
+    /* Fix the circle for containers on the right side */
+    .right::after {
+      left: -16px;
+    }
+
+    /* The actual content */
+    .content {
+      padding: 20px 30px;
+      background-color: white;
+      position: relative;
+      border-radius: 6px;
+    }
+
+    /* Media queries - Responsive timeline on screens less than 600px wide */
+    @media screen and (max-width: 600px) {
+
+      /* Place the timelime to the left */
+      #timeline::after {
+        left: 31px;
+      }
+
+      /* Full-width containers */
+      .container {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+
+      /* Make sure that all arrows are pointing leftwards */
+      .container::before {
+        left: 60px;
+        border: medium solid white;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent white transparent transparent;
+      }
+
+      /* Make sure all circles are at the same spot */
+      .left::after,
+      .right::after {
+        left: 15px;
+      }
+
+      /* Make all right containers behave like the left ones */
+      .right {
+        left: 0%;
+      }
+    }
+
+    a:link,
+    a:visited {
+      background-color: white;
+      color: black;
+      border: 2px solid green;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    a:hover,
+    a:active {
+      background-color: green;
+      color: white;
+    }
+  </style>
+</head>
+
+
+
+<body>
+
+
+
+
+
+<div id="timeline"> 
+
+
+</div>
+
+
+  <script>
+
+
+    // Code from timlinePage that I anticipate I'll resort to in this page. This will be cleaned up later when everything is ready.
+    function generate_id(type, number) {
+      var id_generated = type + number;
+      return id_generated;
+
+
+    }
+
+    function format_date(date_object) {
+      var day, day_num, month, year, day_dictionary, date_as_string, hours, minutes,
+        time_in_day;
+
+      day_dictionary = {
+        0: 'Monday',
+        1: 'Tuesday',
+        2: 'Wednesday',
+        3: 'Thursday',
+        4: 'Friday',
+        5: 'Saturday',
+        6: 'Sunday'
+      };
+
+      day = day_dictionary[date_object.getDay()];
+
+      day_num = date_object.getDate();
+      month = date_object.getMonth();
+      year = date_object.getFullYear();
+      date_as_string = '' + month + '/' + day_num + '/' + year;
+      hours = date_object.getHours();
+      minutes = date_object.getMinutes();
+      time_in_day = '' + hours + ':' + minutes;
+
+
+
+      return [day, date_as_string, time_in_day];
+
+    }
+
+    function generate_trip_name(trip_events) {
+      day_event = trip_events[0];
+
+      date_and_time_object = new Date(day_event["date-time"]);
+      date_and_time_object = format_date(date_and_time_object); // returns a list of ['day', 'date']
+      day = date_and_time_object[0];
+      date = date_and_time_object[1];
+      trip_name = day + '  | ' + date;
+
+      return trip_name;
+
+
+
+    }
+
+
+    function display_trips(all_trips) {
+
+      //variables used for each day's summary
+      //these id variables will be used to determine whar information is displayed about each event
+      // when said information is available. va variables will fill in the content displayed to the user / client!? :)
+      var info_1_va, info_2_va, info_3_va, info_4_va, day, date, trip_name, temporary_id,
+        trip_num, trip_events, day_event, html_code_trip, element_type, date_and_time_object, red_box, event_start_time;
+
+      /*variables I anticipate to use later when we have multiple trips
+        all_trips:  for outer for loop;
+      */
+
+
+
+      //this loop is for testing only. Change condition to work
+      for (let testing = 0; testing < 0; testing++) {
+        all_trips.push(all_trips[0]);
+      }
+
+
+      temporary_id = 1;
+      for (var j = 0; j < all_trips.length; j++) {
+
+        /*What I want to do here is 1- add trip title 2-index each trips event with J*/
+
+
+
+        trip_events = all_trips[j]
+        trip_name = generate_trip_name(trip_events); // this function's existence is a bit redundant but, at the time being, necessary
+
+        html_code_trip = `<div name = ` + trip_name + ` type = 'trip_block' class = 'give_id' id = ` + '' + temporary_id * (j + 1) + ` >
+                                    <h1 class = 'trip_name listened_to give_id' type = 'trip_title'> ` + trip_name + ` </h1>
+                                    </div>`
+
+        document.getElementById('trip_by_days_Summary').innerHTML += html_code_trip;
+
+
+        for (var i = 0; i < trip_events.length; i++) {
+
+          day_event = trip_events[i];
+
+          date_and_time_object = new Date(day_event["date-time"]);
+          date_and_time_object = format_date(date_and_time_object); // returns a list of ['day', 'date']
+          day = date_and_time_object[0];
+          date = date_and_time_object[1];
+          event_start_time = date_and_time_object[2];
+
+          info_1_va = day_event["address"];
+          info_2_va = event_start_time;
+          info_3_va = day_event["category"];
+          info_4_va = day_event["link"];
+          red_box = day_event["title"];
+          console.log(date_and_time_object);
+          trip_name = day + '  | ' + date;
+
+
+          html_code_trip = `<!-- Tha page expects a list of days with their schedules -->
+                                                  <div class = 'event_block content listened_to give_id'  type = 'event_block' >
+                                                      <table  border-radius= 25px class='day_block_metadata'>
+                                                                  <tr>
+                                                                    <td class='timeline_day timeline_date' rowspan='2'> `+ red_box + ` </td>
+                                                                    <td type = 'event_info' class = 'give_id'> ` + info_1_va + `</td>
+                                                                    <td type = 'event_info' class = 'give_id'> starts at |` + info_2_va + `</td>
+                                                                  </tr>
+                                                                  <tr>
+                                                                    <td  type = 'event_info' class = 'give_id'> ` + info_3_va + `</td>
+                                                                    <td  type = 'event_info' class = 'give_id'>
+                                                                        <a href=`+ info_4_va + `>Website</a>
+                                                                    </td>
+                                                                  </tr>
+                                                            </table>
+                                                    <br><br><br><br>
+                                                </div>
+                                              </dibv>
+                                            `;
+
+
+          document.getElementById('' + temporary_id * (j + 1)).innerHTML += html_code_trip;
+
+
+          //document.getElementById('trip_by_days_Summary').appendChild(div);
+          //document.getElementById('trip_by_days_Summary').innerHTML += tripItemGenerator(tripobj);
+        };
+      };
+    };
+
+
+    function collapse_element(id) {
+      document.getElementById(id).style.display = "none";
+    }
+
+    function show_element(id) {
+      document.getElementById(id).style.display = "block";
+    }
+
+    function give_elements_IDs() {
+
+      var elements, id_count;
+
+
+      elements = document.getElementsByClassName('give_id');
+
+      id_count = 0;
+      for (let i = 0; i < elements.length; i++) {
+
+        element = elements[i];
+        type = element.getAttribute('type');
+        element.id = generate_id(type, id_count);
+        id_count++;
+
+
+
+      }
+
+
+
+
+    }
+
+
+
+
+  </script>
+
+
+
+
+
+
+
+  <script> // TODO This is what I need to template</script>
+
+
+  <script >
+    function show_day_vertical_timeline(day_trip){
+
+          console.log('test 1');
+
+
+            var html_code_eventInfo, heading, address, type_of_event, expected_cost, link, day, date, 
+                trip_events, day_event, date_and_time_object, event_start_time, weather, page_side;
+                
+                page_side = 'left';
+
+            console.log('variable <page_side>:', page_side);
+            for (let i = 0; i < day_trip.length; i++){
+                if(page_side == 'left'){
+              page_side = 'right';
+            } else{
+              page_side = 'left'
+            }
+
+                day_event = day_trip[i];
+                date_and_time_object = new Date(day_event["date-time"]);
+                date_and_time_object = format_date(date_and_time_object); // returns a list of ['day', 'date']
+                day = date_and_time_object[0];
+                date = date_and_time_object[1];
+                event_start_time = date_and_time_object[2];
+                address = day_event["address"];
+                type_of_event = day_event["category"];
+                link = day_event["link"];
+                heading = day_event["title"];
+                cost = day_event["price"]
+                
+               
+               
+                
+                var html_code_eventInfo = `
+                                 
+
+
+                                        <div class="container `+ page_side +`">
+
+                                                <div class="content">
+
+                                                        <h2 type='heading'>`+ heading +`</h2>
+                                                        <p type='start_ime'> <b>start time: </b>` + event_start_time +`  </p>
+                                                        <p type='address'> <b>Address: </b> `+ address +`</p>
+                                                        <p type='type_of_event'><b>Type of Event: </b> `+ type_of_event +`</p>
+                                                        <p type='expected_cost'><b>Cost: </b> `+ cost +`</p>
+                                                        <p type='weather'> <b>Weather: </b> `+ weather +` </p>
+                                                        <a href=`+ link + `>Available Links</a>
+
+                                                </div>
+
+                                        </div> 
+
+
+
+                                  `;
+          console.log(html_code_eventInfo); 
+
+          document.getElementById('timeline').innerHTML += html_code_eventInfo;
+        
+            }
+    }
+  </script>
+
+ <script> 
+    var day_trip = [
+	{
+		"title": "Abandoned Buildings In Your Area!",
+		"date-time": "2021-11-22T20:33:46.038Z",
+		"address": "All around you!",
+		"category": "Small Crimes",
+		"link": "https://i.natgeofe.com/n/3faa2b6a-f351-4995-8fff-36d145116882/domestic-dog_16x9.jpg",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Fine."
+	}, {
+		"title": "Car Crash",
+		"date-time": "2021-11-22T20:40:57.539Z",
+		"address": "Wherever you least expect it.",
+		"category": "Petty Tragedies",
+		"link": "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg?_=42445",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Icy."
+	}, {
+		"title": "Car Crash",
+		"date-time": "2021-11-22T20:40:57.539Z",
+		"address": "Wherever you least expect it.",
+		"category": "Petty Tragedies",
+		"link": "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg?_=42445",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Icy."
+	},{
+		"title": "Car Crash",
+		"date-time": "2021-11-22T20:40:57.539Z",
+		"address": "Wherever you least expect it.",
+		"category": "Petty Tragedies",
+		"link": "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg?_=42445",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Icy."
+	},{
+		"title": "Car Crash",
+		"date-time": "2021-11-22T20:40:57.539Z",
+		"address": "Wherever you least expect it.",
+		"category": "Petty Tragedies",
+		"link": "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg?_=42445",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Icy."
+	},{
+		"title": "Car Crash",
+		"date-time": "2021-11-22T20:40:57.539Z",
+		"address": "Wherever you least expect it.",
+		"category": "Petty Tragedies",
+		"link": "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg?_=42445",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Icy."
+	}
+];
+
+show_day_vertical_timeline(day_trip);
+</script>
+
+</body>
+
+</html>

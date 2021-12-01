@@ -1,0 +1,21 @@
+[
+	{
+		"title": "Abandoned Buildings In Your Area!",
+		"date-time": "2021-11-22T20:33:46.038Z",
+		"address": "All around you!",
+		"category": "Small Crimes",
+		"link": "https://i.natgeofe.com/n/3faa2b6a-f351-4995-8fff-36d145116882/domestic-dog_16x9.jpg",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Fine."
+	}, {
+		"title": "Car Crash",
+		"date-time": "2021-11-22T20:40:57.539Z",
+		"address": "Wherever you least expect it.",
+		"category": "Petty Tragedies",
+		"link": "https://www.cdc.gov/healthypets/images/pets/cute-dog-headshot.jpg?_=42445",
+		"price": 0,
+		"isRestaurant": false,
+		"weather": "Icy."
+	}
+]

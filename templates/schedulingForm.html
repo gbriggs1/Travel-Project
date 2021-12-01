@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Travial</title>
+		<meta charset="utf8" />
+		<!-- <script src="./script.js"></script> -->
+		<!-- <link rel="stylesheet" href="./style.css" /> -->
+		<style>
+			#interests {
+				user-select: none;
+			}
+			#interests > span {
+				display: inline-block;
+				position: relative;
+				box-sizing: border-box;
+
+				margin: 3px;
+
+				border: 1px solid black;
+				border-radius: 15px;
+
+				padding: 7px;
+
+				width: 150px;
+				height: 112.5px;
+
+				text-align: center;
+				vertical-align: top;
+			}
+			#interests > span > input {
+				position: absolute;
+				bottom: 7px;
+				right: 7px;
+				pointer-events: none;
+			}
+		</style>
+		<script>
+			window.addEventListener("load", () => {
+				for(let interest of document.querySelectorAll("#interests > span")) {
+					const checkbox = interest.querySelector("input")
+					
+					interest.addEventListener("click", (e) => {
+						checkbox.checked = !checkbox.checked;
+						e.preventDefault();
+					});
+				}
+			});
+		</script>
+	</head>
+	<body>
+		<form>
+			<label>Trip Start: <input type="datetime-local" id="trip-start-input" /></label>
+			<br/>
+			<label>Trip End: <input type="datetime-local" id="trip-end-input" /></label>
+			<br/> 
+			<div>Trip Duration: <span id="trip-duration"></span></div>
+			<label>Trip Budget: <input type="number" id="trip-budget-input" step="1" min="0"/></label>
+			<br/>
+			<label>Trip Longitude: <input type="text" id="trip-longitude" /></label>
+			<label>Latitude: <input type="text" id="trip-latitude" /></label>
+			<h2>Interests:</h2>
+			<div id="interests">
+				<span>Sports<input type="checkbox" /></span>
+				<span>Plays<input type="checkbox" /></span>
+				<span>Movies<input type="checkbox" /></span>
+				<span>Arcades<input type="checkbox" /></span>
+				<span>Museums<input type="checkbox" /></span>
+				<span>Parks<input type="checkbox" /></span>
+				<span>Landmarks<input type="checkbox" /></span>
+				<span>Music<input type="checkbox" /></span>
+				<span>Abandoned Buildings<input type="checkbox" /></span>
+			</div>
+			<button type="button">Start scheduling!</button>
+		</form>
+	</body>
+</html>
