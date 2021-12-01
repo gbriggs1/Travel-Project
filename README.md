@@ -1,6 +1,7 @@
 # Travel-Project
 Given location, date, budget, and set of interests, it will display a trip for the given day matching your inputs.
 
+In the process of getting it to run publicly on gbriggs1.pythonanywhere.com but not complete.
 
 ## Directions to Run:
 
